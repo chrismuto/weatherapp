@@ -1,0 +1,17 @@
+header {
+    width: 100%;
+    padding: 1% 3%;
+    font-size: 3em;
+    background: linear-gradient(
+    rgba(64, 114, 114, 0.1),
+    rgba(64, 114, 114, 0.6)
+    )
+}
+
+.card {
+    height: 250px;
+}
+
+#cityDisplay {
+    height: 300px;
+}
