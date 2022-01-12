@@ -18,6 +18,7 @@ function addCity() {
     newDiv.setAttribute("class", "bg-secondary my-4 p-2 text-center");
     newA.setAttribute("class", "text-decoration-none fs-3 text-dark");
     newA.setAttribute("href", "#placeholder");
+    cityDisplay.textContent = "";
     newA.textContent = newCity;
     cityList.appendChild(newDiv);
     newDiv.appendChild(newA);
@@ -34,10 +35,6 @@ function callWeather(lat, lon) {
     })
     .then(function (data) {
         console.log(data);
-        //log icon for current weather
-        console.log(data.current.weather[0].icon);
-        //log icon description for current weather
-        console.log(data.current.weather[0].description);
         //run pushWeather function to fill content
         pushWeather(data);
     });
@@ -56,9 +53,6 @@ function callGeo(newCity) {
 }
 
 //this function should push the data from the weather api into new div elements to display
-//elements will replace the placeholder div and cards in #cityDisplay div
-//weather information should have current day info
-//weather information should have a 5 day forecast in cards
 function pushWeather(data) {
     var currentDate = timeConverter(data.current.dt);
     var cityName = document.createElement("p");
@@ -85,7 +79,7 @@ function pushWeather(data) {
     cityDisplay.appendChild(p3);
     cityDisplay.appendChild(p4);
 
-    for (i = 0; i < 5; i++) {
+    for (i = 1; i < 6; i++) {
         var date = timeConverter(data.daily[i].dt);
         var weatherCard = document.createElement("div");
         var weatherHeader = document.createElement("h5");
@@ -114,27 +108,15 @@ function pushWeather(data) {
 }
 
 //updates the div holding searched cities display to show new cities when searched(does this need to be a function? maybe code into event listener anon function)
+//this function takes the name of the last city inputted and adds it to the list along with the API link(?)(replace #placeholder)
+//Store the city data in localStorage so it persists
+//ask John or tutor what information should be stored and retrieved from localStorage(maybe newCity and api return data?)
 function updateDisplay() {
 
 }
 
-//retrieving and displaying icons
-//create img url using icon ID in an html address
-//select container element
-// create img el
-// set the src attribute
-//set the alt attribute
-
-
-//button should run function to add new city to storage list
-//button should run function to update the div storing past cities
-//button should run function to turn a city name into lat/long coordinates
-//button should run function to call API and get weather information
-//button should run function to push weather information to main body
-//button should update the display of the div element containing past city searches
+//runs addCity function on submit button click, starting all javascript code
 submitBtn.addEventListener("click", addCity)
-
-// callGeo();
 
 //converts unix time to a date
 function timeConverter(timestamp){
