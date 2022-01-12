@@ -66,12 +66,15 @@ function pushWeather(data) {
     var p2 = document.createElement("p");
     var p3 = document.createElement("p");
     var p4 = document.createElement("p");
-    cityName.setAttribute("class", "card");
+    var icon = document.createElement("img");
+    cityName.setAttribute("class", "card-text");
     p1.setAttribute("class", "card-text");
     p2.setAttribute("class", "card-text");
     p3.setAttribute("class", "card-text");
     p4.setAttribute("class", "card-text");
-    cityName.textContent =searchInput.value + ": " + currentDate;
+    icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2px.png");
+    icon.setAttribute("alt", data.current.weather[0].description)
+    cityName.textContent =searchInput.value + ": " + currentDate + " " + icon;
     p1.textContent = "temp: " + data.current.temp;
     p2.textContent = "wind speed: " + data.current.wind_speed;
     p3.textContent = "humidity: " + data.current.humidity + "%";
@@ -89,19 +92,23 @@ function pushWeather(data) {
         var p1 = document.createElement("p");
         var p2 = document.createElement("p");
         var p3 = document.createElement("p");
-        weatherCard.setAttribute("class", "card");
+        var p4 = document.createElement("p");
+        weatherCard.setAttribute("class", "card col-2 border-dark border-2 mx-3");
         weatherHeader.setAttribute("class", "card-title");
         p1.setAttribute("class", "card-text");
         p2.setAttribute("class", "card-text");
         p3.setAttribute("class", "card-text");
+        p4.setAttribute("class", "card-text");
         weatherHeader.textContent = date;
-        p1.textContent = "temp: " + data.daily[i].temp.day;
-        p2.textContent = "wind speed: " + data.daily[i].wind_speed;
+        p1.textContent = "temp: " + data.daily[i].weather[0].icon;
+        p2.textContent = "wind speed: " + data.daily[i].temp.day;
+        p3.textContent = "humidity: " + data.daily[i].wind_speed;
         p3.textContent = "humidity: " + data.daily[i].humidity + "%";
         fiveDayDisplay.appendChild(weatherCard);
         weatherCard.appendChild(weatherHeader);
         weatherCard.appendChild(p1);
         weatherCard.appendChild(p2);
+        weatherCard.appendChild(p3);
         weatherCard.appendChild(p3);
     }
 }
