@@ -26,6 +26,18 @@ function addCity() {
     //local storage push goes here
 }
 
+//this function will translate city names into lat/long coordinates for weather api
+function callGeo(newCity) {
+    var geolocateApi = "https://api.openweathermap.org/geo/1.0/direct?q=" + newCity + "&limit=1&appid=d06d736f70b1c7547ee6d36a7c3c8929";
+    fetch(geolocateApi)
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (data) {
+        callWeather(data[0].lat, data[0].lon);
+    });
+}
+
 //this function will call the weather api with the geo api information
 function callWeather(lat, lon) {
     var weatherApiUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely,hourly,alert&appid=d06d736f70b1c7547ee6d36a7c3c8929&units=imperial";
@@ -37,18 +49,6 @@ function callWeather(lat, lon) {
         console.log(data);
         //run pushWeather function to fill content
         pushWeather(data);
-    });
-}
-
-//this function will translate city names into lat/long coordinates for weather api
-function callGeo(newCity) {
-    var geolocateApi = "https://api.openweathermap.org/geo/1.0/direct?q=" + newCity + "&limit=1&appid=d06d736f70b1c7547ee6d36a7c3c8929";
-    fetch(geolocateApi)
-    .then(function (response) {
-        return response.json();
-    })
-    .then(function (data) {
-        callWeather(data[0].lat, data[0].lon);
     });
 }
 
@@ -66,14 +66,15 @@ function pushWeather(data) {
     p2.setAttribute("class", "card-text");
     p3.setAttribute("class", "card-text");
     p4.setAttribute("class", "card-text");
-    icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2px.png");
-    icon.setAttribute("alt", data.current.weather[0].description)
-    cityName.textContent =searchInput.value + ": " + currentDate + " " + icon;
+    icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2x.png");
+    icon.setAttribute("alt", data.current.weather[0].description);
+    cityName.textContent =searchInput.value + ": " + currentDate;
     p1.textContent = "temp: " + data.current.temp;
     p2.textContent = "wind speed: " + data.current.wind_speed;
     p3.textContent = "humidity: " + data.current.humidity + "%";
     p4.textContent = "humidity: " + data.current.uvi;
     cityDisplay.appendChild(cityName);
+    cityDisplay.appendChild(icon);
     cityDisplay.appendChild(p1);
     cityDisplay.appendChild(p2);
     cityDisplay.appendChild(p3);
@@ -87,23 +88,27 @@ function pushWeather(data) {
         var p2 = document.createElement("p");
         var p3 = document.createElement("p");
         var p4 = document.createElement("p");
+        var icon = document.createElement("img");
         weatherCard.setAttribute("class", "card col-2 border-dark border-2 mx-3");
         weatherHeader.setAttribute("class", "card-title");
+        icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png");
+        icon.setAttribute("alt", data.daily[i].weather[0].description);
         p1.setAttribute("class", "card-text");
         p2.setAttribute("class", "card-text");
         p3.setAttribute("class", "card-text");
         p4.setAttribute("class", "card-text");
         weatherHeader.textContent = date;
-        p1.textContent = "temp: " + data.daily[i].weather[0].icon;
-        p2.textContent = "wind speed: " + data.daily[i].temp.day;
-        p3.textContent = "humidity: " + data.daily[i].wind_speed;
-        p3.textContent = "humidity: " + data.daily[i].humidity + "%";
+        p1.textContent = "";
+        p2.textContent = "temp: " + data.daily[i].temp.day;
+        p3.textContent = "wind speed: " + data.daily[i].wind_speed;
+        p4.textContent = "humidity: " + data.daily[i].humidity + "%";
         fiveDayDisplay.appendChild(weatherCard);
         weatherCard.appendChild(weatherHeader);
         weatherCard.appendChild(p1);
         weatherCard.appendChild(p2);
         weatherCard.appendChild(p3);
-        weatherCard.appendChild(p3);
+        weatherCard.appendChild(p4);
+        p1.appendChild(icon);
     }
 }
 
