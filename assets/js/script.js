@@ -8,13 +8,14 @@ var storageArray = [];
 var newCity;
 
 //this function takes the name of the last city inputted and adds it to the list along with the API link(?)(replace #placeholder)
-function addCity(newCity) {
+function addCity(event) {
+    event.preventDefault();
     if (searchInput.value === "") {
         return;
     }
     var newDiv;
     var newA;
-    newCity = searchInput.value;
+    var newCity = searchInput.value;
     newDiv = document.createElement("div");
     newA = document.createElement("a");
     newDiv.setAttribute("class", "bg-secondary my-4 p-2 text-center");
@@ -130,15 +131,14 @@ function updateDisplay() {
         cityList.textContent = "";
         for (i = 0; i < storageArray.length; i++) {
             var newDiv;
-            var newA;
+            var newBtn;
             newDiv = document.createElement("div");
-            newDiv.setAttribute("class", "col-12 bg-secondary fs-4 my-4 p-2");
-            newA = document.createElement("a");
-            newA.setAttribute("class", "text-decoration-none text-white col-12 fs-4 my-4 p-2");
-            newA.textContent = storageArray[i].city;
-            newA.setAttribute("href", storageArray[i].url)
+            newDiv.setAttribute("class", "col-12 fs-4 my-4 p-2");
+            newBtn = document.createElement("button");
+            newBtn.setAttribute("class", "text-decoration-none bg-secondary text-white col-12 fs-4 my-4 p-2");
+            newBtn.textContent = storageArray[i].city;
             cityList.appendChild(newDiv);
-            newDiv.appendChild(newA);
+            newDiv.appendChild(newBtn);
             console.log(storageArray[i]);
         }
     }
@@ -147,6 +147,13 @@ function updateDisplay() {
 //runs addCity function on submit button click, starting all javascript code
 submitBtn.addEventListener("click", addCity)
 
+cityList.addEventListener("click", function(event) {
+    if (event.target.matches("button")) {
+        callGeo(event.target.textContent);
+        cityDisplay.textContent = "";
+        cityDisplay.textContent = event.target.textContent;
+    }
+})
 //converts unix time to a date
 function timeConverter(timestamp){
     var a = new Date(timestamp * 1000);
