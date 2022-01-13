@@ -5,14 +5,16 @@ var cityDisplay = document.querySelector("#cityDisplay");
 var fiveDayDisplay = document.querySelector("#fiveDayDisplay");
 var weatherContainer = document.querySelector("#weather-container");
 var storageArray = [];
+var newCity;
 
 //this function takes the name of the last city inputted and adds it to the list along with the API link(?)(replace #placeholder)
-//Store the city data in localStorage so it persists
-//ask John or tutor what information should be stored and retrieved from localStorage(maybe newCity and api return data?)
-function addCity() {
+function addCity(newCity) {
+    if (searchInput.value === "") {
+        return;
+    }
     var newDiv;
     var newA;
-    var newCity = searchInput.value;
+    newCity = searchInput.value;
     newDiv = document.createElement("div");
     newA = document.createElement("a");
     newDiv.setAttribute("class", "bg-secondary my-4 p-2 text-center");
@@ -23,7 +25,9 @@ function addCity() {
     cityList.appendChild(newDiv);
     newDiv.appendChild(newA);
     callGeo(newCity);
-    //local storage push goes here
+    storageArray.push({"city": searchInput.value, "url": document.location.href});
+    localStorage.setItem("cities", JSON.stringify(storageArray));
+    updateDisplay();
 }
 
 //this function will translate city names into lat/long coordinates for weather api
@@ -55,24 +59,24 @@ function callWeather(lat, lon) {
 //this function should push the data from the weather api into new div elements to display
 function pushWeather(data) {
     var currentDate = timeConverter(data.current.dt);
-    var cityName = document.createElement("p");
+    var cityName = document.createElement("h2");
     var p1 = document.createElement("p");
     var p2 = document.createElement("p");
     var p3 = document.createElement("p");
     var p4 = document.createElement("p");
     var icon = document.createElement("img");
-    cityName.setAttribute("class", "card-text");
-    p1.setAttribute("class", "card-text");
-    p2.setAttribute("class", "card-text");
-    p3.setAttribute("class", "card-text");
-    p4.setAttribute("class", "card-text");
+    cityName.setAttribute("class", "card-text m-2");
+    p1.setAttribute("class", "card-text m-2");
+    p2.setAttribute("class", "card-text m-2");
+    p3.setAttribute("class", "card-text m-2");
+    p4.setAttribute("class", "card-text m-2");
     icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2x.png");
     icon.setAttribute("alt", data.current.weather[0].description);
     cityName.textContent =searchInput.value + ": " + currentDate;
     p1.textContent = "temp: " + data.current.temp;
     p2.textContent = "wind speed: " + data.current.wind_speed;
     p3.textContent = "humidity: " + data.current.humidity + "%";
-    p4.textContent = "humidity: " + data.current.uvi;
+    p4.textContent = "Current UV index: " + data.current.uvi;
     cityDisplay.appendChild(cityName);
     cityDisplay.appendChild(icon);
     cityDisplay.appendChild(p1);
@@ -80,6 +84,10 @@ function pushWeather(data) {
     cityDisplay.appendChild(p3);
     cityDisplay.appendChild(p4);
 
+    //clear display if a search has already been sent
+    fiveDayDisplay.textContent = "";
+
+    //loop through the next 5 days of forecast information to make cards
     for (i = 1; i < 6; i++) {
         var date = timeConverter(data.daily[i].dt);
         var weatherCard = document.createElement("div");
@@ -93,10 +101,10 @@ function pushWeather(data) {
         weatherHeader.setAttribute("class", "card-title");
         icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png");
         icon.setAttribute("alt", data.daily[i].weather[0].description);
-        p1.setAttribute("class", "card-text");
-        p2.setAttribute("class", "card-text");
-        p3.setAttribute("class", "card-text");
-        p4.setAttribute("class", "card-text");
+        p1.setAttribute("class", "card-text m-1");
+        p2.setAttribute("class", "card-text m-1");
+        p3.setAttribute("class", "card-text m-1");
+        p4.setAttribute("class", "card-text m-1");
         weatherHeader.textContent = date;
         p1.textContent = "";
         p2.textContent = "temp: " + data.daily[i].temp.day;
@@ -109,15 +117,31 @@ function pushWeather(data) {
         weatherCard.appendChild(p3);
         weatherCard.appendChild(p4);
         p1.appendChild(icon);
+        searchInput.value = "";
     }
 }
 
-//updates the div holding searched cities display to show new cities when searched(does this need to be a function? maybe code into event listener anon function)
-//this function takes the name of the last city inputted and adds it to the list along with the API link(?)(replace #placeholder)
-//Store the city data in localStorage so it persists
-//ask John or tutor what information should be stored and retrieved from localStorage(maybe newCity and api return data?)
+//updates the div holding searched cities display to show new cities when searched
 function updateDisplay() {
-
+    storedArray = JSON.parse(localStorage.getItem("cities"));
+    
+    if (storedArray) {
+        storageArray = storedArray;
+        cityList.textContent = "";
+        for (i = 0; i < storageArray.length; i++) {
+            var newDiv;
+            var newA;
+            newDiv = document.createElement("div");
+            newDiv.setAttribute("class", "col-12 bg-secondary fs-4 my-4 p-2");
+            newA = document.createElement("a");
+            newA.setAttribute("class", "text-decoration-none text-white col-12 fs-4 my-4 p-2");
+            newA.textContent = storageArray[i].city;
+            newA.setAttribute("href", storageArray[i].url)
+            cityList.appendChild(newDiv);
+            newDiv.appendChild(newA);
+            console.log(storageArray[i]);
+        }
+    }
 }
 
 //runs addCity function on submit button click, starting all javascript code
@@ -133,3 +157,5 @@ function timeConverter(timestamp){
     var time = month + '/' + date + '/' + year;
     return time;
   }
+
+  updateDisplay();
