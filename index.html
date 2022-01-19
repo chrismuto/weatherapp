@@ -19,19 +19,20 @@
                 <h1>Search for a City:</h1>
                 <form>
                 <input id="search-input" class="form-input w-100 fs-3" type="text" placeholder="Find a city!">
-                <button type="submit" class="col-12 bg-info fs-4 my-4 p-2" id="submitBtn">Find your city!</button>
-                </form>
-                <div class="col-12 justify-content-center border-top border-dark" id="cityList">
+                <button type="submit" class="col-12 bg-info fs-4 my-4 p-2 border-dark" id="submitBtn">Find your city!</button>
+                <button class="col-12 bg-info fs-4 my-4 p-2 border-dark" id="reset">Clear cities</button>
+            </form>
+                <div class="col-12 justify-content-center border-top border-2" id="cityList">
                 </div>
             </div>
-            <div class="col-9">
-                <div class="col-12 border border-dark border-2 my-3 jumbotron" id="cityDisplay">
-                    CITY INFO
+            <div class="col-9 container-fluid">
+                <div class="col-12 border border-dark border-2 my-3 row-6 jumbotron fs-3 bg-light" id="cityDisplay">
+                    City Info
                 </div>
                 <div>
                     <h2>5-day Forecast:</h2>
                 </div>
-                <div class="row justify-content-between" id="fiveDayDisplay">
+                <div class="row justify-content-between col-12" id="fiveDayDisplay">
                 </div>
             </div>
         </div>

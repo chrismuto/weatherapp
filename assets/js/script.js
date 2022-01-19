@@ -4,8 +4,8 @@ var cityList = document.querySelector("#cityList");
 var cityDisplay = document.querySelector("#cityDisplay");
 var fiveDayDisplay = document.querySelector("#fiveDayDisplay");
 var weatherContainer = document.querySelector("#weather-container");
+var resetBtn = document.querySelector("#reset");
 var storageArray = [];
-var newCity;
 
 //this function takes the name of the last city inputted and adds it to the list along with the API link(?)(replace #placeholder)
 function addCity(event) {
@@ -18,7 +18,7 @@ function addCity(event) {
     var newCity = searchInput.value;
     newDiv = document.createElement("div");
     newA = document.createElement("a");
-    newDiv.setAttribute("class", "bg-secondary my-4 p-2 text-center");
+    newDiv.setAttribute("class", "bg-secondary my-2 p-2 text-center");
     newA.setAttribute("class", "text-decoration-none fs-3 text-dark");
     newA.setAttribute("href", "#placeholder");
     cityDisplay.textContent = "";
@@ -26,7 +26,10 @@ function addCity(event) {
     cityList.appendChild(newDiv);
     newDiv.appendChild(newA);
     callGeo(newCity);
-    storageArray.push({"city": searchInput.value, "url": document.location.href});
+    storageArray.push({
+        "city": searchInput.value,
+        "url": document.location.href
+    });
     localStorage.setItem("cities", JSON.stringify(storageArray));
     updateDisplay();
 }
@@ -35,26 +38,26 @@ function addCity(event) {
 function callGeo(newCity) {
     var geolocateApi = "https://api.openweathermap.org/geo/1.0/direct?q=" + newCity + "&limit=1&appid=d06d736f70b1c7547ee6d36a7c3c8929";
     fetch(geolocateApi)
-    .then(function (response) {
-        return response.json();
-    })
-    .then(function (data) {
-        callWeather(data[0].lat, data[0].lon);
-    });
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            callWeather(data[0].lat, data[0].lon);
+        });
 }
 
 //this function will call the weather api with the geo api information
 function callWeather(lat, lon) {
     var weatherApiUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely,hourly,alert&appid=d06d736f70b1c7547ee6d36a7c3c8929&units=imperial";
     fetch(weatherApiUrl)
-    .then(function (response) {
-        return response.json();
-    })
-    .then(function (data) {
-        console.log(data);
-        //run pushWeather function to fill content
-        pushWeather(data);
-    });
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            console.log(data);
+            //run pushWeather function to fill content
+            pushWeather(data);
+        });
 }
 
 //this function should push the data from the weather api into new div elements to display
@@ -65,7 +68,9 @@ function pushWeather(data) {
     var p2 = document.createElement("p");
     var p3 = document.createElement("p");
     var p4 = document.createElement("p");
+    let uvi = document.createElement("span");
     var icon = document.createElement("img");
+    uvi.textContent = data.current.uvi;
     cityName.setAttribute("class", "card-text m-2");
     p1.setAttribute("class", "card-text m-2");
     p2.setAttribute("class", "card-text m-2");
@@ -73,17 +78,25 @@ function pushWeather(data) {
     p4.setAttribute("class", "card-text m-2");
     icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2x.png");
     icon.setAttribute("alt", data.current.weather[0].description);
-    cityName.textContent =searchInput.value + ": " + currentDate;
+    cityName.textContent = searchInput.value + currentDate;
     p1.textContent = "temp: " + data.current.temp;
     p2.textContent = "wind speed: " + data.current.wind_speed;
     p3.textContent = "humidity: " + data.current.humidity + "%";
-    p4.textContent = "Current UV index: " + data.current.uvi;
+    p4.textContent = "Current UV index: ";
+    if (data.current.uvi < 1.5) {
+        uvi.setAttribute("img", "bg-success");
+    } else if (data.current.uvi <= 3.0) {
+        uvi.setAttribute("class", "bg-caution");
+    } else {
+        uvi.setAttribute("class", "bg-danger")
+    }
     cityDisplay.appendChild(cityName);
     cityDisplay.appendChild(icon);
     cityDisplay.appendChild(p1);
     cityDisplay.appendChild(p2);
     cityDisplay.appendChild(p3);
     cityDisplay.appendChild(p4);
+    p4.appendChild(uvi);
 
     //clear display if a search has already been sent
     fiveDayDisplay.textContent = "";
@@ -98,14 +111,14 @@ function pushWeather(data) {
         var p3 = document.createElement("p");
         var p4 = document.createElement("p");
         var icon = document.createElement("img");
-        weatherCard.setAttribute("class", "card col-2 border-dark border-2 mx-3");
+        weatherCard.setAttribute("class", "card col-12 col-xxl-2 border-dark border-2 mx-3 h-75");
         weatherHeader.setAttribute("class", "card-title");
         icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png");
         icon.setAttribute("alt", data.daily[i].weather[0].description);
-        p1.setAttribute("class", "card-text m-1");
-        p2.setAttribute("class", "card-text m-1");
-        p3.setAttribute("class", "card-text m-1");
-        p4.setAttribute("class", "card-text m-1");
+        p1.setAttribute("class", "fs-4 card-text m-1");
+        p2.setAttribute("class", "fs-4 card-text m-1");
+        p3.setAttribute("class", "fs-4 card-text m-1");
+        p4.setAttribute("class", "fs-4 card-text m-1");
         weatherHeader.textContent = date;
         p1.textContent = "";
         p2.textContent = "temp: " + data.daily[i].temp.day;
@@ -125,7 +138,7 @@ function pushWeather(data) {
 //updates the div holding searched cities display to show new cities when searched
 function updateDisplay() {
     storedArray = JSON.parse(localStorage.getItem("cities"));
-    
+
     if (storedArray) {
         storageArray = storedArray;
         cityList.textContent = "";
@@ -133,7 +146,7 @@ function updateDisplay() {
             var newDiv;
             var newBtn;
             newDiv = document.createElement("div");
-            newDiv.setAttribute("class", "col-12 fs-4 my-4 p-2");
+            newDiv.setAttribute("class", "col-12 fs-4 my-1 p-1");
             newBtn = document.createElement("button");
             newBtn.setAttribute("class", "text-decoration-none bg-secondary text-white col-12 fs-4 my-4 p-2");
             newBtn.textContent = storageArray[i].city;
@@ -147,7 +160,7 @@ function updateDisplay() {
 //runs addCity function on submit button click, starting all javascript code
 submitBtn.addEventListener("click", addCity)
 
-cityList.addEventListener("click", function(event) {
+cityList.addEventListener("click", function (event) {
     if (event.target.matches("button")) {
         callGeo(event.target.textContent);
         cityDisplay.textContent = "";
@@ -155,7 +168,7 @@ cityList.addEventListener("click", function(event) {
     }
 })
 //converts unix time to a date
-function timeConverter(timestamp){
+function timeConverter(timestamp) {
     var a = new Date(timestamp * 1000);
     var months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
     var year = a.getFullYear();
@@ -163,6 +176,14 @@ function timeConverter(timestamp){
     var date = a.getDate();
     var time = month + '/' + date + '/' + year;
     return time;
-  }
+}
 
-  updateDisplay();
+function reset() {
+    localStorage.removeItem("cities");
+    cityList.textContent = "";
+}
+resetBtn.addEventListener("click", function (event) {
+    event.preventDefault();
+    reset();
+})
+updateDisplay();

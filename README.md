@@ -8,7 +8,7 @@ An app that takes a submitted city name and displays the current day's forecast 
 
 The following image show a glimpse of the application:
 
-<img src="screenshot.png">
+<img src="Screenshot.png">
 
 ## Getting Started
 
