@@ -84,11 +84,11 @@ function pushWeather(data) {
     p3.textContent = "humidity: " + data.current.humidity + "%";
     p4.textContent = "Current UV index: ";
     if (data.current.uvi < 1.5) {
-        uvi.setAttribute("img", "bg-success");
+        uvi.setAttribute("class", "bg-success rounded-circle p-2");
     } else if (data.current.uvi <= 3.0) {
-        uvi.setAttribute("class", "bg-caution");
+        uvi.setAttribute("class", "bg-caution rounded-circle p-2");
     } else {
-        uvi.setAttribute("class", "bg-danger")
+        uvi.setAttribute("class", "bg-danger rounded-circle p-2")
     }
     cityDisplay.appendChild(cityName);
     cityDisplay.appendChild(icon);
@@ -111,7 +111,8 @@ function pushWeather(data) {
         var p3 = document.createElement("p");
         var p4 = document.createElement("p");
         var icon = document.createElement("img");
-        weatherCard.setAttribute("class", "card col-12 col-xxl-2 border-dark border-2 mx-3 h-75");
+        weatherCard.setAttribute("class", "card col-12 col-xxl-2 m-3 shadow-lg bg-secondary h-75");
+        weatherCard.setAttribute("style", "--bs-bg-opacity: .5;")
         weatherHeader.setAttribute("class", "card-title");
         icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png");
         icon.setAttribute("alt", data.daily[i].weather[0].description);
@@ -148,7 +149,8 @@ function updateDisplay() {
             newDiv = document.createElement("div");
             newDiv.setAttribute("class", "col-12 fs-4 my-1 p-1");
             newBtn = document.createElement("button");
-            newBtn.setAttribute("class", "text-decoration-none bg-secondary text-white col-12 fs-4 my-4 p-2");
+            newBtn.setAttribute("type", "button");
+            newBtn.setAttribute("class", "btn btn-success text-decoration-none text-white col-12 fs-4 my-4 p-2");
             newBtn.textContent = storageArray[i].city;
             cityList.appendChild(newDiv);
             newDiv.appendChild(newBtn);
