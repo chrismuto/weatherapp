@@ -8,8 +8,7 @@ var resetBtn = document.querySelector("#reset");
 var storageArray = [];
 
 //this function takes the name of the last city inputted and adds it to the list along with the API link(?)(replace #placeholder)
-function addCity(event) {
-    event.preventDefault();
+function addCity() {
     if (searchInput.value === "") {
         return;
     }
@@ -26,10 +25,6 @@ function addCity(event) {
     cityList.appendChild(newDiv);
     newDiv.appendChild(newA);
     callGeo(newCity);
-    storageArray.push({
-        "city": searchInput.value,
-        "url": document.location.href
-    });
     localStorage.setItem("cities", JSON.stringify(storageArray));
     updateDisplay();
 }
@@ -38,10 +33,16 @@ function addCity(event) {
 function callGeo(newCity) {
     var geolocateApi = "https://api.openweathermap.org/geo/1.0/direct?q=" + newCity + "&limit=1&appid=d06d736f70b1c7547ee6d36a7c3c8929";
     fetch(geolocateApi)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (data) {
+        if (!storageArray.some(e => e.city === searchInput.value)) {
+            storageArray.push({
+                "city": searchInput.value,
+                "url": document.location.href
+            });
+          }
             callWeather(data[0].lat, data[0].lon);
         });
 }
@@ -54,8 +55,6 @@ function callWeather(lat, lon) {
             return response.json();
         })
         .then(function (data) {
-            console.log(data);
-            //run pushWeather function to fill content
             pushWeather(data);
         });
 }
@@ -78,7 +77,7 @@ function pushWeather(data) {
     p4.setAttribute("class", "card-text m-2");
     icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2x.png");
     icon.setAttribute("alt", data.current.weather[0].description);
-    cityName.textContent = searchInput.value + currentDate;
+    cityName.innerHTML = searchInput.value + "<br />" + currentDate;
     p1.textContent = "temp: " + data.current.temp;
     p2.textContent = "wind speed: " + data.current.wind_speed;
     p3.textContent = "humidity: " + data.current.humidity + "%";
@@ -159,8 +158,18 @@ function updateDisplay() {
     }
 }
 
-//runs addCity function on submit button click, starting all javascript code
-submitBtn.addEventListener("click", addCity)
+submitBtn.addEventListener("click", addCity);
+
+searchInput.addEventListener("keydown", function(e) {
+
+    var key = e.which || e.keyCode || 0;
+
+    if (key === 13) {
+        e.preventDefault();
+        addCity();
+    }
+
+});
 
 cityList.addEventListener("click", function (event) {
     if (event.target.matches("button")) {
@@ -183,6 +192,7 @@ function timeConverter(timestamp) {
 function reset() {
     localStorage.removeItem("cities");
     cityList.textContent = "";
+    window.location.reload();
 }
 resetBtn.addEventListener("click", function (event) {
     event.preventDefault();
