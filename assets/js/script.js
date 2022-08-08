@@ -12,21 +12,11 @@ function addCity() {
     if (searchInput.value === "") {
         return;
     }
-    var newDiv;
-    var newA;
+    // var newDiv;
+    // var newA;
     var newCity = searchInput.value;
-    newDiv = document.createElement("div");
-    newA = document.createElement("a");
-    newDiv.setAttribute("class", "bg-secondary my-2 p-2 text-center");
-    newA.setAttribute("class", "text-decoration-none fs-3 text-dark");
-    newA.setAttribute("href", "#placeholder");
-    cityDisplay.textContent = "";
-    newA.textContent = newCity;
-    cityList.appendChild(newDiv);
-    newDiv.appendChild(newA);
     callGeo(newCity);
-    localStorage.setItem("cities", JSON.stringify(storageArray));
-    updateDisplay();
+    cityDisplay.textContent = "";
 }
 
 //this function will translate city names into lat/long coordinates for weather api
@@ -37,12 +27,23 @@ function callGeo(newCity) {
         return response.json();
     })
     .then(function (data) {
-        if (!storageArray.some(e => e.city === searchInput.value)) {
+        if (!storageArray.some(e => e.city === data[0].name)) {
             storageArray.push({
-                "city": searchInput.value,
+                "city": data[0].name,
                 "url": document.location.href
-            });
-          }
+            })
+            var newDiv = document.createElement("div");
+            var newA = document.createElement("a");
+            newDiv.setAttribute("class", "bg-secondary my-2 p-2 text-center");
+            newA.setAttribute("class", "text-decoration-none fs-3 text-dark");
+            newA.setAttribute("href", "#placeholder");
+            newA.textContent = newCity;
+            cityList.appendChild(newDiv);
+            newDiv.appendChild(newA);
+            localStorage.setItem("cities", JSON.stringify(storageArray));
+            updateDisplay();
+            ;
+        }
             callWeather(data[0].lat, data[0].lon);
         });
 }
