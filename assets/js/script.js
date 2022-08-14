@@ -60,7 +60,7 @@ function callWeather(lat, lon) {
         });
 }
 
-//this function should push the data from the weather api into new div elements to display
+//this function will take the data from the weather api and create new div elements to display
 function pushWeather(data) {
     var currentDate = timeConverter(data.current.dt);
     var cityName = document.createElement("h2");
@@ -71,6 +71,8 @@ function pushWeather(data) {
     let uvi = document.createElement("span");
     var icon = document.createElement("img");
     uvi.textContent = data.current.uvi;
+    uvi.setAttribute("class", "text-center");
+    // uvi.setAttribute("style", "")
     cityName.setAttribute("class", "card-text m-2");
     p1.setAttribute("class", "card-text m-2");
     p2.setAttribute("class", "card-text m-2");
@@ -79,16 +81,16 @@ function pushWeather(data) {
     icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2x.png");
     icon.setAttribute("alt", data.current.weather[0].description);
     cityName.innerHTML = searchInput.value + "<br />" + currentDate;
-    p1.textContent = "temp: " + data.current.temp;
-    p2.textContent = "wind speed: " + data.current.wind_speed;
+    p1.innerHTML = "temp: " + Math.round(data.current.temp) + "&#176;";
+    p2.textContent = "wind speed: " + Math.round(data.current.wind_speed) + " mph";
     p3.textContent = "humidity: " + data.current.humidity + "%";
     p4.textContent = "Current UV index: ";
     if (data.current.uvi < 1.5) {
-        uvi.setAttribute("class", "bg-success rounded-circle p-2");
+        uvi.setAttribute("style", "width: 100px; height: 60px; background-image: url(/assets/images/uvigreen.png); background-size: 100% 100%; display: inline-block");
     } else if (data.current.uvi <= 3.0) {
-        uvi.setAttribute("class", "bg-caution rounded-circle p-2");
+        uvi.setAttribute("style", "width: 100px; height: 60px; background-image: url(/assets/images/uviyellow.png); background-size: 100% 100%; display: inline-block");
     } else {
-        uvi.setAttribute("class", "bg-danger rounded-circle p-2")
+        uvi.setAttribute("style", "width: 100px; height: 60px; background-image: url(/assets/images/uvired.png); background-size: 100% 100%; display: inline-block")
     }
     cityDisplay.appendChild(cityName);
     cityDisplay.appendChild(icon);
@@ -111,9 +113,8 @@ function pushWeather(data) {
         var p3 = document.createElement("p");
         var p4 = document.createElement("p");
         var icon = document.createElement("img");
-        weatherCard.setAttribute("class", "card col-12 col-xxl-2 m-3 shadow-lg bg-secondary h-75");
-        weatherCard.setAttribute("style", "--bs-bg-opacity: .5;")
-        weatherHeader.setAttribute("class", "card-title");
+        weatherCard.setAttribute("class", "card col-12 col-xl-2 m-2 shadow-lg h-75");
+        weatherHeader.setAttribute("class", "card-title mt-2");
         icon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png");
         icon.setAttribute("alt", data.daily[i].weather[0].description);
         p1.setAttribute("class", "fs-4 card-text m-1");
@@ -122,7 +123,7 @@ function pushWeather(data) {
         p4.setAttribute("class", "fs-4 card-text m-1");
         weatherHeader.textContent = date;
         p1.textContent = "";
-        p2.textContent = "temp: " + data.daily[i].temp.day;
+        p2.innerHTML = "temp: " + Math.round(data.daily[i].temp.day) + "&#176;";
         p3.textContent = "wind speed: " + data.daily[i].wind_speed;
         p4.textContent = "humidity: " + data.daily[i].humidity + "%";
         fiveDayDisplay.appendChild(weatherCard);
@@ -150,7 +151,7 @@ function updateDisplay() {
             newDiv.setAttribute("class", "col-12 fs-4 my-1 p-1");
             newBtn = document.createElement("button");
             newBtn.setAttribute("type", "button");
-            newBtn.setAttribute("class", "btn btn-success text-decoration-none text-white col-12 fs-4 my-4 p-2");
+            newBtn.setAttribute("class", "btn btn-success text-decoration-none text-white col-12 fs-5 mt-4 p-2");
             newBtn.textContent = storageArray[i].city;
             cityList.appendChild(newDiv);
             newDiv.appendChild(newBtn);
@@ -182,11 +183,11 @@ cityList.addEventListener("click", function (event) {
 //converts unix time to a date
 function timeConverter(timestamp) {
     var a = new Date(timestamp * 1000);
-    var months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     var year = a.getFullYear();
     var month = months[a.getMonth()];
     var date = a.getDate();
-    var time = month + '/' + date + '/' + year;
+    var time = month + ' ' + date + ', ' + year;
     return time;
 }
 
